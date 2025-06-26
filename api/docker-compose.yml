@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  sandbox-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV=dev
+      - JWT_SECRET=sandbox-dev-secret-key
+      - DATABASE_URL=sqlite:///./sandbox.db
+    volumes:
+      - .:/code
+      - /code/__pycache__
+    command: ["/run-dev.sh"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  sandbox-api-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: test
+    ports:
+      - "8001:8000"
+    environment:
+      - ENV=test
+      - JWT_SECRET=sandbox-test-secret-key
+      - DATABASE_URL=sqlite:///./sandbox-test.db
+    volumes:
+      - .:/code
+      - /code/__pycache__
+    command: ["/run.sh"]
+    profiles:
+      - test
+
+  sandbox-api-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: prod
+    ports:
+      - "8002:8000"
+    environment:
+      - ENV=prod
+      - JWT_SECRET=${JWT_SECRET:-sandbox-prod-secret-key}
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///./sandbox-prod.db}
+    volumes:
+      - ./data:/code/data
+    command: ["/run.sh"]
+    profiles:
+      - prod
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  default:
+    name: openwatt-sandbox-network 
