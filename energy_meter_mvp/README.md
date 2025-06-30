@@ -16,7 +16,7 @@ A FastAPI-based REST API that implements asynchronous CSV export for smart meter
 
 ## Project Structure
 ```
-OpenWatts/
+energy_meter_mvp/
 ├── main.py                 # FastAPI application with endpoints
 ├── models.py              # SQLAlchemy database models
 ├── schemas.py             # Pydantic request/response models
@@ -43,8 +43,8 @@ OpenWatts/
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd OpenWatts
+   git clone git@github.com:Nillkabbo/energy-meter-mvp.git
+   cd energy_meter_mvp
    ```
 
 2. **Create and activate virtual environment**
